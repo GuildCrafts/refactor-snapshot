@@ -2,18 +2,12 @@ const express = require('express');
 
 const pgp = require('pg-promise')();
 
-const connectionString = 'postgres://localhost:5432/roamwfriends';
-const db = pgp(connectionString);
+const router = require('./routes')
 
 const server = express();
 const port = process.env.PORT || 3000;
-const user = require('./routes/users/user');
-const profile = require('./routes/users/profile/profile');
-const city = require('./routes/cities/city');
-const login = require('./routes/login/login');
-const review = require('./routes/review');
-const index = require('./routes/index');
 const auth = require('./routes/auth');
+const { connectionString } = require('./models/db/db');
 const bodyParser = require('body-parser');
 const session = require('express-session');
 const pgSession = require('connect-pg-simple')(session);
@@ -21,7 +15,7 @@ const passport = require('passport');
 
 server.set('view engine', 'ejs');
 server.set('views', __dirname + '/views');
-server.use(express.static(__dirname + '/public'));
+server.use(express.static('public'));
 
 server.use(session({
   store: new pgSession({
@@ -39,22 +33,7 @@ server.use(passport.session());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({ extended: true }));
 
-server.use('/', index);
-server.use('/login', login);
-server.use('/auth', console.log);
-
-server.use((request, response, next) => {
-  if (request.user) {
-    next();
-  } else {
-    response.redirect('/');
-  }
-});
-
-server.use('/cities', city);
-server.use('/reviews', review);
-server.use('/users', user);
-server.use('/profile', profile);
+server.use(router)
 
 server.listen(3000, (err) => {
   console.log(`Started ze server on port ${port}.`);

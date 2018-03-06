@@ -1,8 +1,8 @@
 const express = require('express');
 
 const router = express.Router();
-const reviewFunctions = require('../../../database/controllers/review');
-const userFunctions = require('../../../database/controllers/user');
+const reviewFunctions = require('../../../models/db/review');
+const userFunctions = require('../../../models/db/user');
 
 
 router.get('/', (request, response) => {
@@ -44,10 +44,8 @@ router.get('/updated', (request, response) => {
 
 router.get('/review', (request, response) => {
   const userId = request.user.id
-  console.log( '---===userId===---', userId );
   reviewFunctions.displayUserSpecificReviews(userId)
     .then((allUserReviews) => {
-      console.log( '---===allUserReviews===---', allUserReviews );
       response.render('users/profile', { user: request.session.user, reviews: allUserReviews, city: true });
     });
 });

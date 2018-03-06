@@ -2,11 +2,11 @@ const bcrypt = require('bcrypt');
 const {
   getByEmail,
   getById,
-} = require('../database/controllers/user');
+} = require('../models/db/user');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
+const localStrategy = require('passport-local').Strategy;
 
-passport.use(new LocalStrategy({
+passport.use(new localStrategy({
     usernameField: 'email',
     passwordField: 'password',
   },
